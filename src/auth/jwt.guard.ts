@@ -17,9 +17,6 @@ export class JwtGuard implements CanActivate {
     // Extract the HTTP request object from NestJS execution context
     const request = context.switchToHttp().getRequest();
 
-    // Print request headers for debugging (to see Authorization header)
-    console.log(request.headers);
-
     // Get the Authorization header
     // Expected format: "Bearer <token>"
     const authHeader = request.headers['authorization'];

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import * as fs from "fs";
 import * as bcrypt from "bcrypt";
 import { v4 as uuidv4 } from "uuid";
@@ -17,6 +17,12 @@ export class UsersService {
   }
 
   async createUser(email: string, password: string) {
+
+    const existingUser = this.findByEmail(email);
+    
+    if (existingUser) {
+      throw new ConflictException('User with this email already exists');
+    }
 
     const users = this.readUsers();
 
@@ -42,7 +48,7 @@ export class UsersService {
 
     const users = this.readUsers();
 
-    return users.find(u => u.email === email);
+    return users.find(u => u.email.toLowerCase() === email.toLowerCase());
   }
 
   findById(id: string) {
