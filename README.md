@@ -18,6 +18,7 @@ Small NestJS backend for user signup/login and task CRUD, using JWT auth and Pos
 - Docker Compose
 - Swagger
 
+## How to run with Docker
 ## How to run 
 
 These steps are for anyone who clones the repo from GitHub.
@@ -47,7 +48,6 @@ cp .env.example .env
 Set at least these values:
 
 ```env
-BACKEND_IMAGE=gantyadasreeja/nest-crud-backend:latest
 JWT_SECRET=change-me
 DB_HOST=postgres
 DB_PORT=5432
@@ -58,19 +58,18 @@ DB_NAME=nest_crud
 
 Notes:
 
-- `BACKEND_IMAGE` should point to the image published on Docker Hub
 - `DB_HOST=postgres` should stay as-is when using Docker Compose
 - `JWT_SECRET` and `DB_PASSWORD` should be changed for local use
 
 ### 4. Run the Application with Docker
 
 ```powershell
-docker compose up
+docker compose up --build
 ```
 
 This will:
 
-- pull the backend image from Docker Hub
+- build the backend image from this repository
 - start a PostgreSQL container
 - start the backend container
 
@@ -138,3 +137,18 @@ Task routes:
 - `PATCH /tasks/:id`
 - `DELETE /tasks/:id`
 
+## Optional: publish image to Docker Hub
+
+Run these commands from the `backend` folder:
+
+```powershell
+docker login
+docker build -t gantyadasreeja/nest-crud-backend:latest .
+docker push gantyadasreeja/nest-crud-backend:latest
+```
+
+## Important notes
+
+- `.env` is ignored by git and should never be committed
+- `.env.example` is the file that should be committed
+- This repo is set up so users can clone it and run `docker compose up --build`

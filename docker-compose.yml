@@ -14,7 +14,7 @@ services:
       - "${DB_PORT:-5432}:5432"
 
   backend:
-    image: ${BACKEND_IMAGE}
+    build: .
     container_name: nest_backend
     depends_on:
       - postgres
