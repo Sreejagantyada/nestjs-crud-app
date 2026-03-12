@@ -1,84 +1,93 @@
-import { Injectable } from '@nestjs/common';
-import * as fs from "fs";
-import { v4 as uuidv4 } from "uuid";
+import { Injectable, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+
+import { Task } from './task.entity';
+import { User } from '../users/user.entity';
 
 @Injectable()
 export class TasksService {
 
-  private file = "src/data/tasks.json";
+  constructor(
+    @InjectRepository(Task)
+    private tasksRepo: Repository<Task>,
 
-  private readTasks() {
-    return JSON.parse(fs.readFileSync(this.file, "utf8"));
-  }
+    @InjectRepository(User)
+    private usersRepo: Repository<User>,
+  ) {}
 
-  private saveTasks(tasks) {
-    fs.writeFileSync(this.file, JSON.stringify(tasks, null, 2));
-  }
+  async createTask(userId: string, data) {
 
-  createTask(userId: string, data) {
+    const user = await this.usersRepo.findOne({
+      where: { id: userId }
+    });
 
-    const tasks = this.readTasks();
+    if (!user) {
+      throw new NotFoundException("User not found");
+    }
 
-    const task = {
-      id: uuidv4(),
+    const task = this.tasksRepo.create({
       title: data.title,
       dueDate: data.dueDate,
-      createdBy: userId
+      user
+    });
+
+    const saved = await this.tasksRepo.save(task);
+
+    return {
+      id: saved.id,
+      title: saved.title,
+      dueDate: saved.dueDate
     };
-
-    tasks.push(task);
-
-    this.saveTasks(tasks);
-
-    return task;
   }
 
-  getUserTasks(userId: string) {
+  async getUserTasks(userId: string) {
 
-    const tasks = this.readTasks();
+    const tasks = await this.tasksRepo.find({
+      where: { user: { id: userId } }
+    });
 
-    return tasks.filter(t => t.createdBy === userId);
+    return tasks.map(task => ({
+      id: task.id,
+      title: task.title,
+      dueDate: task.dueDate
+    }));
   }
 
-  updateTask(taskId: string, userId: string, data) {
+  async updateTask(taskId: string, userId: string, data) {
 
-    const tasks = this.readTasks();
-
-    const task = tasks.find(
-      t => t.id === taskId && t.createdBy === userId
-    );
+    const task = await this.tasksRepo.findOne({
+      where: { id: taskId, user: { id: userId } }
+    });
 
     if (!task) {
-      throw new Error("Task not found");
-      }
+      throw new NotFoundException("Task not found");
+    }
 
     if (data.title !== undefined) task.title = data.title;
     if (data.dueDate !== undefined) task.dueDate = data.dueDate;
 
-    this.saveTasks(tasks);
+    const updated = await this.tasksRepo.save(task);
 
-    return task;
+    return {
+      id: updated.id,
+      title: updated.title,
+      dueDate: updated.dueDate
+    };
   }
 
- deleteTask(taskId: string, userId: string) {
+  async deleteTask(taskId: string, userId: string) {
 
-  const tasks = this.readTasks();
+    const task = await this.tasksRepo.findOne({
+      where: { id: taskId, user: { id: userId } }
+    });
 
-  const task = tasks.find(
-    t => t.id === taskId && t.createdBy === userId
-  );
+    if (!task) {
+      throw new NotFoundException("Task not found");
+    }
 
-  if (!task) {
-    throw new Error("Task not found");
+    await this.tasksRepo.remove(task);
+
+    return { message: "Task deleted" };
   }
-
-  const filtered = tasks.filter(
-    t => !(t.id === taskId && t.createdBy === userId)
-  );
-
-  this.saveTasks(filtered);
-
-  return { message: "Task deleted" };
-}
-
 }

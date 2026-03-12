@@ -1,99 +1,157 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# NestJS Task Manager API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Small NestJS backend for user signup/login and task CRUD, using JWT auth and PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## What this project does
 
-## Description
+- User signup and login
+- JWT-protected profile endpoints
+- JWT-protected task create, list, update, and delete endpoints
+- Swagger API docs at `/api`
+- PostgreSQL database with Docker Compose
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Tech stack
 
-## Project setup
+- NestJS
+- TypeORM
+- PostgreSQL
+- Docker Compose
+- Swagger
 
-```bash
-$ npm install
+## Easiest way to run
+
+These steps are for anyone who clones the repo from GitHub.
+
+### 1. Go to the backend folder
+
+```powershell
+cd backend
 ```
 
-## Compile and run the project
+### 2. Create a local `.env` file
 
-```bash
-# development
-$ npm run start
+Windows PowerShell:
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+```powershell
+Copy-Item .env.example .env
 ```
 
-## Run tests
+macOS/Linux:
 
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+cp .env.example .env
 ```
 
-## Deployment
+### 3. Edit `.env`
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+Set at least these values:
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+```env
+BACKEND_IMAGE=gantyadasreeja/nest-crud-backend:latest
+JWT_SECRET=change-me
+DB_HOST=postgres
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=change-me
+DB_NAME=nest_crud
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Notes:
 
-## Resources
+- `BACKEND_IMAGE` should point to the image published on Docker Hub
+- `DB_HOST=postgres` should stay as-is when using Docker Compose
+- `JWT_SECRET` and `DB_PASSWORD` should be changed for local use
 
-Check out a few resources that may come in handy when working with NestJS:
+### 4. Run the project
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+```powershell
+docker compose up
+```
 
-## Support
+This will:
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- pull the backend image from Docker Hub
+- start a PostgreSQL container
+- start the backend container
 
-## Stay in touch
+### 5. Open the app
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+- API: `http://localhost:3000`
+- Swagger docs: `http://localhost:3000/api`
 
-## License
+## Stop the project
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
-# nestjs-crud-app
+```powershell
+docker compose down
+```
+
+## Common Docker commands
+
+Start again:
+
+```powershell
+docker compose up
+```
+
+Run in background:
+
+```powershell
+docker compose up -d
+```
+
+View logs:
+
+```powershell
+docker compose logs -f
+```
+
+Stop and remove containers:
+
+```powershell
+docker compose down
+```
+
+## Run without Docker
+
+You can also run locally without Docker, but PostgreSQL must already be installed and running.
+
+```powershell
+npm install
+npm run start:dev
+```
+
+Make sure `.env` points to your local PostgreSQL instance if you use this method.
+
+## API summary
+
+User routes:
+
+- `POST /users/signup`
+- `POST /users/login`
+- `GET /users/profile`
+- `PATCH /users/profile`
+
+Task routes:
+
+- `POST /tasks`
+- `GET /tasks`
+- `PATCH /tasks/:id`
+- `DELETE /tasks/:id`
+
+## For the maintainer: publish image to Docker Hub
+
+Run these commands from the `backend` folder:
+
+```powershell
+docker login
+docker build -t gantyadasreeja/nest-crud-backend:latest .
+docker push gantyadasreeja/nest-crud-backend:latest
+```
+
+Then update `BACKEND_IMAGE` in `.env.example` if you want the repo to point to your real published image by default.
+
+## Important notes
+
+- `.env` is ignored by git and should never be committed
+- `.env.example` is the file that should be committed
+- If someone only runs the backend image without PostgreSQL, the app will not work unless they provide a separate database

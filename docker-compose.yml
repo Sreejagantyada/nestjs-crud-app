@@ -1,0 +1,24 @@
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: nest_postgres
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME}
+    ports:
+      - "${DB_PORT:-5432}:5432"
+
+  backend:
+    image: ${BACKEND_IMAGE}
+    container_name: nest_backend
+    depends_on:
+      - postgres
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env

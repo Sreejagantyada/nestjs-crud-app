@@ -1,61 +1,50 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import * as fs from "fs";
-import * as bcrypt from "bcrypt";
-import { v4 as uuidv4 } from "uuid";
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import * as bcrypt from 'bcrypt';
+
+import { User } from './user.entity';
 
 @Injectable()
 export class UsersService {
 
-  private file = "src/data/users.json";
-
-  private readUsers() {
-    return JSON.parse(fs.readFileSync(this.file, "utf8"));
-  }
-
-  private saveUsers(users) {
-    fs.writeFileSync(this.file, JSON.stringify(users, null, 2));
-  }
+  constructor(
+    @InjectRepository(User)
+    private usersRepo: Repository<User>,
+  ) {}
 
   async createUser(email: string, password: string) {
 
-    const existingUser = this.findByEmail(email);
-    
+    const existingUser = await this.findByEmail(email);
+
     if (existingUser) {
       throw new ConflictException('User with this email already exists');
     }
 
-    const users = this.readUsers();
-
     const hashed = await bcrypt.hash(password, 10);
 
-    const user = {
-      id: uuidv4(),
+    const user = this.usersRepo.create({
       email,
       password: hashed,
-      firstName: "",
-      lastName: "",
-      phone: ""
-    };
+    });
 
-    users.push(user);
+    const saved = await this.usersRepo.save(user);
 
-    this.saveUsers(users);
-
-    return { id: user.id, email: user.email };
+    return { id: saved.id, email: saved.email };
   }
 
-  findByEmail(email: string) {
-
-    const users = this.readUsers();
-
-    return users.find(u => u.email.toLowerCase() === email.toLowerCase());
+  async findByEmail(email: string) {
+    return this.usersRepo.findOne({
+      where: { email }
+    });
   }
 
-  findById(id: string) {
+  async findById(id: string) {
 
-    const users = this.readUsers();
+    const user = await this.usersRepo.findOne({
+      where: { id }
+    });
 
-    const user = users.find(u => u.id === id);
     if (!user) return null;
 
     return {
@@ -67,29 +56,26 @@ export class UsersService {
     };
   }
 
-  updateProfile(id: string, data) {
+  async updateProfile(id: string, data) {
 
-    const users = this.readUsers();
+    const user = await this.usersRepo.findOne({
+      where: { id }
+    });
 
-    const user = users.find(u => u.id === id);
-    
-    if(!user) return null;
-    
+    if (!user) return null;
 
     if (data.firstName !== undefined) user.firstName = data.firstName;
     if (data.lastName !== undefined) user.lastName = data.lastName;
     if (data.phone !== undefined) user.phone = data.phone;
 
-    this.saveUsers(users);
+    const updated = await this.usersRepo.save(user);
 
     return {
-    id: user.id,
-    email: user.email,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    phone: user.phone
-  };
-    
+      id: updated.id,
+      email: updated.email,
+      firstName: updated.firstName,
+      lastName: updated.lastName,
+      phone: updated.phone
+    };
   }
-
 }
