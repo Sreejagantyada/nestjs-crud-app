@@ -18,7 +18,7 @@ Small NestJS backend for user signup/login and task CRUD, using JWT auth and Pos
 - Docker Compose
 - Swagger
 
-## Easiest way to run
+## How to run 
 
 These steps are for anyone who clones the repo from GitHub.
 
@@ -62,7 +62,7 @@ Notes:
 - `DB_HOST=postgres` should stay as-is when using Docker Compose
 - `JWT_SECRET` and `DB_PASSWORD` should be changed for local use
 
-### 4. Run the project
+### 4. Run the Application with Docker
 
 ```powershell
 docker compose up
