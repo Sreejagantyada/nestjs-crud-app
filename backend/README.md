@@ -1,0 +1,154 @@
+# NestJS Task Manager API
+
+Small NestJS backend for user signup/login and task CRUD, using JWT auth and PostgreSQL.
+
+## What this project does
+
+- User signup and login
+- JWT-protected profile endpoints
+- JWT-protected task create, list, update, and delete endpoints
+- Swagger API docs at `/api`
+- PostgreSQL database with Docker Compose
+
+## Tech stack
+
+- NestJS
+- TypeORM
+- PostgreSQL
+- Docker Compose
+- Swagger
+
+## How to run with Docker
+## How to run 
+
+These steps are for anyone who clones the repo from GitHub.
+
+### 1. Go to the backend folder
+
+```powershell
+cd backend
+```
+
+### 2. Create a local `.env` file
+
+Windows PowerShell:
+
+```powershell
+Copy-Item .env.example .env
+```
+
+macOS/Linux:
+
+```bash
+cp .env.example .env
+```
+
+### 3. Edit `.env`
+
+Set at least these values:
+
+```env
+JWT_SECRET=change-me
+DB_HOST=postgres
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=change-me
+DB_NAME=nest_crud
+```
+
+Notes:
+
+- `DB_HOST=postgres` should stay as-is when using Docker Compose
+- `JWT_SECRET` and `DB_PASSWORD` should be changed for local use
+
+### 4. Run the Application with Docker
+
+```powershell
+docker compose up --build
+```
+
+This will:
+
+- build the backend image from this repository
+- start a PostgreSQL container
+- start the backend container
+
+### 5. Open the app
+
+- API: `http://localhost:3000`
+- Swagger docs: `http://localhost:3000/api`
+
+## Stop the project
+
+```powershell
+docker compose down
+```
+
+## Common Docker commands
+
+Start again:
+
+```powershell
+docker compose up
+```
+
+Run in background:
+
+```powershell
+docker compose up -d
+```
+
+View logs:
+
+```powershell
+docker compose logs -f
+```
+
+Stop and remove containers:
+
+```powershell
+docker compose down
+```
+
+## Run without Docker
+
+You can also run locally without Docker, but PostgreSQL must already be installed and running.
+
+```powershell
+npm install
+npm run start:dev
+```
+
+Make sure `.env` points to your local PostgreSQL instance if you use this method.
+
+## API summary
+
+User routes:
+
+- `POST /users/signup`
+- `POST /users/login`
+- `GET /users/profile`
+- `PATCH /users/profile`
+
+Task routes:
+
+- `POST /tasks`
+- `GET /tasks`
+- `PATCH /tasks/:id`
+- `DELETE /tasks/:id`
+
+## Optional: publish image to Docker Hub
+
+Run these commands from the `backend` folder:
+
+```powershell
+docker login
+docker build -t gantyadasreeja/nest-crud-backend:latest .
+docker push gantyadasreeja/nest-crud-backend:latest
+```
+
+## Important notes
+
+- `.env` is ignored by git and should never be committed
+- `.env.example` is the file that should be committed
+- This repo is set up so users can clone it and run `docker compose up --build`
