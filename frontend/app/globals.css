@@ -1,0 +1,32 @@
+@import "tailwindcss";
+@plugin "daisyui";
+
+:root {
+  --background: #edf1f7;
+  --foreground: #111827;
+  --surface: #ffffff;
+  --primary: #332d7a;
+  --primary-soft: #e7e9ff;
+  --border-soft: #d8deea;
+  --muted: #6b7280;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-primary-brand: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-border-soft: var(--border-soft);
+  --color-muted: var(--muted);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+a {
+  transition: color 150ms ease;
+}
